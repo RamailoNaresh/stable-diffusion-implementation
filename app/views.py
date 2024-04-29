@@ -144,3 +144,75 @@ def sketch_image(request):
         return JsonResponse({'message': "Image generated successfully"})
     except Exception as e:
         return JsonResponse({'message': str(e)})
+
+
+def outpaint_image():
+    api_key = settings.API_KEY
+    response = requests.post(
+        f"https://api.stability.ai/v2beta/stable-image/edit/outpaint",
+        headers={
+            "authorization": f"Bearer {api_key}",
+            "accept": "image/*"
+        },
+        files={
+            "image": open("/home/mango/Downloads/naresh.jpg", "rb")
+        },
+        data={
+            "left": 200,
+            "down": 200,
+            "output_format": "webp"
+        },
+    )
+
+    if response.status_code == 200:
+        with open("/home/mango/outpaint.webp", 'wb') as file:
+            file.write(response.content)
+    else:
+        raise Exception(str(response.json()))
+
+
+def search_and_replace():
+    api_key = settings.API_KEY
+    response = requests.post(
+        f"https://api.stability.ai/v2beta/stable-image/edit/search-and-replace",
+        headers={
+            "authorization": f"Bearer {api_key}",
+            "accept": "image/*"
+        },
+        files={
+            "image": open("/home/mango/Downloads/naresh.jpg", "rb")
+        },
+        data={
+            "prompt": "god shiva snake ",
+            "search_prompt": "muffler"
+        }
+    )
+
+    if response.status_code == 200:
+        with open("/home/mango/replace.webp", 'wb') as file:
+            file.write(response.content)
+    else:
+        raise Exception(str(response.json()))
+
+
+def inpaint():
+    response = requests.post(
+        f"https://api.stability.ai/v2beta/stable-image/edit/inpaint",
+        headers={
+            "authorization": f"Bearer sk-MYAPIKEY",
+            "accept": "image/*"
+        },
+        files={
+            "image": open("/home/mango/Downloads/naresh.jpg", "rb")
+        },
+        data={
+            "prompt": "replace cloth with party suit",
+            "output_format": "webp",
+        },
+    )
+
+    if response.status_code == 200:
+        with open("./dog-wearing-black-glasses.webp", 'wb') as file:
+            file.write(response.content)
+    else:
+        raise Exception(str(response.json()))
